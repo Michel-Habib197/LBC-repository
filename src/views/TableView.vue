@@ -16,7 +16,6 @@
             class="elevation-1"
             height="400px">
             <template v-slot:item="{item}">
-              <tr>
                 <td>{{ item['Customer Name'] || 'N/A'}}</td>
                 <td>{{ item.Sales || 'N/A'}}</td>
                 <td>{{ item.City || 'N/A'}}</td>
@@ -24,9 +23,8 @@
                 <td>{{ item.Country || 'N/A'}}</td>
                 <td>{{ item['Order Date'] || 'N/A'}}</td>
                 <td>{{ item.Category || 'N/A'}}</td>
-              </tr>
             </template>
-            <template>
+            <template v-slot:no-data>
               <span>Nenhum dado disponível</span>
             </template>
           </v-data-table>
@@ -63,23 +61,26 @@
  const loading = ref(false)
 
  const fetchData = async () => {
-  try {
+  try{
     loading.value = true
     const response = await fetch('/StoreSales.json')
-    const data = await response.json()
 
-    if (Array.isArray(data)) {
-      tableData.value = data.slice(0, 1000)
-    } else {
-      console.error('Dados carregados não são um array:', data)
+    if(!response.ok){
+      throw new Error(`Erro: ${response.status} - ${response.statusText}`)
     }
 
-    
+    const data = await response.json()
+
+    if(Array.isArray(data)){
+      tableData.value = data.slice(0, 1000)
+    }else{
+      console.error('Dados carregdos nao sao de uma array', data)
+    }
+
     console.log('Dados carregados:', data)
-    
-  } catch (error) {
-    console.error('Erro ao carregar os dados', error)
-  } finally {
+  }catch(error){
+    console.error('Erro o carregar os dados', error)
+  }finally{
     loading.value = false
   }
 }
