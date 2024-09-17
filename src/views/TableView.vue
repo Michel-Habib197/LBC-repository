@@ -1,60 +1,29 @@
 <template>
-    <v-app>
-      <SideBar :isDrawerOpen="isDrawerOpen" />
-      <div>
-        <v-app-bar :elevation="0" height="64">
-          <v-app-bar-nav-icon class="d-flex" @click="toggleDrawer"></v-app-bar-nav-icon>
-        </v-app-bar>
-      </div>
-      <v-main class>
-        <h1 class="text-decoration-underline d-flex justify-start mb-6 ms-15">Table:</h1>
-        <div class="table-container">
-          <v-data-table
-            :items="tableData"
-            :headers="headers"
-            :loading="loading"
-            class="elevation-1"
-            height="400px">
-            <template v-slot:item="{item}">
-                <td>{{ item['Customer Name'] || 'N/A'}}</td>
-                <td>{{ item.Sales || 'N/A'}}</td>
-                <td>{{ item.City || 'N/A'}}</td>
-                <td>{{ item.State || 'N/A'}}</td>
-                <td>{{ item.Country || 'N/A'}}</td>
-                <td>{{ item['Order Date'] || 'N/A'}}</td>
-                <td>{{ item.Category || 'N/A'}}</td>
-            </template>
-            <template v-slot:no-data>
-              <span>Nenhum dado disponível</span>
-            </template>
-          </v-data-table>
-        </div>
-     
-      </v-main>
-    </v-app>
+    <v-container fluid>
+      <h1 class="text-decoration-underline d-flex justify-start ms-5">Table:</h1>
+       <v-data-table 
+        :items="tableData" 
+        :headers="headers" 
+        item.value="Product Name" 
+       header-class="custom-header"
+       ></v-data-table>
+    </v-container>
   </template>
 
 
 
   
  <script setup>
- import {ref, watch, onMounted} from 'vue'
- import SideBar from'@/components/SideBar.vue'
-
- const isDrawerOpen =  ref(false)
-
- const toggleDrawer=() => {
-  isDrawerOpen.value = !isDrawerOpen.value
- }
+ import {ref, onMounted} from 'vue'
 
  const headers = [
-  {text:'Name', value:'Customer Name'},
-  {text:'Price', value:'Sales'},
-  {text:'City', value:'City'},
-  {text:'State', value:'State'},
-  {text:'Country', value:'Country'},
-  {text:'Date of sale', value:'Order Date'},
-  {text:'Category', value:'Category'},
+  {title:'Product Name', align: 'start', key:'Product Name'},
+  {title: 'Sales', align: 'end', key: 'Sales'},
+  {title:'City', align: 'end', key: 'City'},
+  {title:'State', align: 'end', key: 'State'},
+  {title:'Country', align: 'end', key: 'Country'},
+  {title:'Order Date', align: 'end', key: 'Order Date'},
+  {title:'Category', align: 'end', key: 'Category'}
  ]
 
  const tableData = ref([])
@@ -64,11 +33,6 @@
   try{
     loading.value = true
     const response = await fetch('/StoreSales.json')
-
-    if(!response.ok){
-      throw new Error(`Erro: ${response.status} - ${response.statusText}`)
-    }
-
     const data = await response.json()
 
     if(Array.isArray(data)){
@@ -76,23 +40,39 @@
     }else{
       console.error('Dados carregdos nao sao de uma array', data)
     }
-
-    console.log('Dados carregados:', data)
   }catch(error){
     console.error('Erro o carregar os dados', error)
-  }finally{
-    loading.value = false
   }
 }
 
+// const FakeAPI = {
+//   async fetch({page, itensPerPage,sortBy}){
+//     return new Promise(resolve =>{
+//       setTimeout(() => {
+//         const start = (page-1)*itensPerPage
+//         const end = start + itensPerPage
+//         const items = fetchData()
+
+//         if(sortBy.length){
+//           const sortKey = sortBy[0].key
+//           const sortOrder = sortBy[0].order
+//           items.sort((a, b) =>{
+//             const aValue = a[sortKey]
+//             const bValue = b[sortKey]
+//             return sortOrder === 'desc' ? bValue - aValue : aValue - bValue
+//           })
+//         }
+//           const paginated =  items.slice(start,end)
+        
+//         resolve({items: paginated, total: items.length})
+//       }, 500)
+//         })
+//     }
+//   }
+
+
 onMounted(() => {
   fetchData()
+  
 })
 </script>
-
-<style scoped>
-.table-container {
-  height: 400px;
-  overflow-y: auto; 
-}
-</style>
