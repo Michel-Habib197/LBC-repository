@@ -9,13 +9,13 @@
 import { ref, onMounted } from 'vue';
 import CardsComponent from '@/components/CardsComponent.vue';
 
-const isDrawerOpen = ref(false);
+// const isDrawerOpen = ref(false);
 const contents = ref([]);
 
-const toggleDrawer = () => {
-  isDrawerOpen.value = !isDrawerOpen.value;
+// const toggleDrawer = () => {
+//   isDrawerOpen.value = !isDrawerOpen.value;
 
-};
+// };
 
 onMounted(() => {
   fetch('https://fakestoreapi.com/products')
